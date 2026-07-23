@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>RGBBandDialog</class>
+
+ <widget class="QDialog" name="RGBBandDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>420</width>
+    <height>320</height>
+   </rect>
+  </property>
+
+  <property name="windowTitle">
+   <string>RGB Band Selection</string>
+  </property>
+
+  <layout class="QVBoxLayout" name="verticalLayout">
+
+   <!-- Raster Information -->
+   <item>
+    <widget class="QGroupBox" name="groupBoxRaster">
+     <property name="title">
+      <string>Selected Raster</string>
+     </property>
+
+     <layout class="QFormLayout" name="formLayoutRaster">
+
+      <item row="0" column="0">
+       <widget class="QLabel" name="labelRaster">
+        <property name="text">
+         <string>Raster</string>
+        </property>
+       </widget>
+      </item>
+
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="rasterNameLineEdit">
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+
+      <item row="1" column="0">
+       <widget class="QLabel" name="labelBands">
+        <property name="text">
+         <string>Total Bands</string>
+        </property>
+       </widget>
+      </item>
+
+      <item row="1" column="1">
+       <widget class="QLineEdit" name="bandCountLineEdit">
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+
+     </layout>
+
+    </widget>
+   </item>
+
+   <!-- RGB Selection -->
+   <item>
+    <widget class="QGroupBox" name="groupBoxRGB">
+     <property name="title">
+      <string>RGB Composite</string>
+     </property>
+
+     <layout class="QFormLayout" name="formLayoutRGB">
+
+      <item row="0" column="0">
+       <widget class="QLabel" name="labelRed">
+        <property name="text">
+         <string>Red Band</string>
+        </property>
+       </widget>
+      </item>
+
+      <item row="0" column="1">
+       <widget class="QComboBox" name="redBandComboBox"/>
+      </item>
+
+      <item row="1" column="0">
+       <widget class="QLabel" name="labelGreen">
+        <property name="text">
+         <string>Green Band</string>
+        </property>
+       </widget>
+      </item>
+
+      <item row="1" column="1">
+       <widget class="QComboBox" name="greenBandComboBox"/>
+      </item>
+
+      <item row="2" column="0">
+       <widget class="QLabel" name="labelBlue">
+        <property name="text">
+         <string>Blue Band</string>
+        </property>
+       </widget>
+      </item>
+
+      <item row="2" column="1">
+       <widget class="QComboBox" name="blueBandComboBox"/>
+      </item>
+
+     </layout>
+
+    </widget>
+   </item>
+
+   <!-- Options -->
+   <item>
+    <widget class="QGroupBox" name="groupBoxOptions">
+     <property name="title">
+      <string>Display Options</string>
+     </property>
+
+     <layout class="QVBoxLayout" name="verticalLayoutOptions">
+
+      <item>
+       <widget class="QCheckBox" name="stretchCheckBox">
+        <property name="text">
+         <string>Apply Contrast Stretch</string>
+        </property>
+       </widget>
+      </item>
+
+     </layout>
+
+    </widget>
+   </item>
+
+   <!-- Buttons -->
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel</set>
+     </property>
+    </widget>
+   </item>
+
+  </layout>
+
+ </widget>
+
+ <resources/>
+
+ <connections>
+
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>RGBBandDialog</receiver>
+   <slot>accept()</slot>
+  </connection>
+
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>RGBBandDialog</receiver>
+   <slot>reject()</slot>
+  </connection>
+
+ </connections>
+
+</ui>

@@ -1,0 +1,237 @@
+#include "PcaStackDialog.h"
+#include "../MainWindow.h"
+#include "../ProgressDialog.h"
+
+#include <QFormLayout>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QPushButton>
+#include <QFileDialog>
+#include <QMessageBox>
+#include <QLabel>
+#include <QGroupBox>
+
+using namespace hsi;
+
+PcaStackDialog::PcaStackDialog(HsiMainWindow* mainWindow, QWidget* parent)
+    : QDialog(parent), mw_(mainWindow) {
+    setWindowTitle("Step 5 — PCA + Stack");
+    setMinimumWidth(580);
+
+    int maxBand = mw_->appState().surfaceReflectance
+                      ? mw_->appState().surfaceReflectance->bands - 1 : 197;
+
+    // ── PCA ──────────────────────────────────────────────────────────────
+    pcaStartSpin_      = new QSpinBox(); pcaStartSpin_->setRange(0, maxBand); pcaStartSpin_->setValue(std::min(70, maxBand));
+    pcaEndSpin_        = new QSpinBox(); pcaEndSpin_->setRange(0, maxBand);   pcaEndSpin_->setValue(maxBand);
+    pcaComponentsSpin_ = new QSpinBox(); pcaComponentsSpin_->setRange(1, 10); pcaComponentsSpin_->setValue(1);
+
+    auto* pcaForm = new QFormLayout();
+    pcaForm->addRow("Band range start (0-based):", pcaStartSpin_);
+    pcaForm->addRow("Band range end (0-based):",   pcaEndSpin_);
+    pcaForm->addRow("Number of PC components:",    pcaComponentsSpin_);
+    auto* pcaRunBtn = new QPushButton("Run PCA");
+    auto* pcaGroup  = new QGroupBox("PCA — SWIR band reduction (bands 70–224)");
+    auto* pcaLayout = new QVBoxLayout();
+    pcaLayout->addLayout(pcaForm);
+    pcaLayout->addWidget(pcaRunBtn);
+    pcaGroup->setLayout(pcaLayout);
+
+    // ── Merge point legend ────────────────────────────────────────────────
+    auto* mergeLbl = new QLabel(
+        "<b>Stack layout after merge:</b><br>"
+        "<span style='color:#2980b9;'>■</span>&nbsp;&nbsp;"
+            "<b>0 – 197</b>&nbsp; Hyperion surface reflectance&nbsp;<i>(this module)</i><br>"
+        "<span style='color:#27ae60;'>■</span>&nbsp;&nbsp;"
+            "<b>198 – end</b>&nbsp; Fused data TIFF (all bands from fusion team:<br>"
+            "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+            "S2 B2/B3/B4/B8 + EOS-04 VV/VH + NDVI + NDWI + ...)<br><br>"
+        "<i style='color:#888;font-size:11px;'>The exact number of fused bands is read "
+        "automatically from the file — no need to match any fixed count.</i>",
+        this);
+    mergeLbl->setTextFormat(Qt::RichText);
+    mergeLbl->setWordWrap(true);
+    mergeLbl->setStyleSheet("background:#ecf0f1;padding:10px;border-radius:5px;"
+                             "border:1px solid #bdc3c7;font-size:12px;");
+
+    // ── Single fused-data input ───────────────────────────────────────────
+    fusedPathEdit_ = new QLineEdit();
+    fusedPathEdit_->setPlaceholderText(
+        "Fused data GeoTIFF from fusion team "
+        "(S2 B2/B3/B4/B8 + EOS-04 VV/VH + NDVI + NDWI + ... all in one file)");
+    auto* browseFusedBtn = new QPushButton("Browse…");
+
+    auto* fusedRow = new QHBoxLayout();
+    fusedRow->addWidget(fusedPathEdit_);
+    fusedRow->addWidget(browseFusedBtn);
+
+    auto* stackForm = new QFormLayout();
+    stackForm->addRow("Fused data TIFF (optional — leave blank for standalone):", fusedRow);
+
+    auto* stackRunBtn = new QPushButton("Build Stack  ▶");
+    stackRunBtn->setStyleSheet(
+        "QPushButton{background:#2980b9;color:white;font-weight:bold;"
+        "border:none;border-radius:4px;padding:8px 16px;}"
+        "QPushButton:hover{background:#3498db;}");
+
+    auto* stackGroup  = new QGroupBox("Build Stack  (Hyperion + Fused 9-band data from fusion team)");
+    auto* stackLayout = new QVBoxLayout();
+    stackLayout->addWidget(mergeLbl);
+    stackLayout->addSpacing(6);
+    stackLayout->addLayout(stackForm);
+    stackLayout->addWidget(stackRunBtn);
+    stackGroup->setLayout(stackLayout);
+
+    auto* layout = new QVBoxLayout(this);
+    layout->setSpacing(10);
+    layout->addWidget(pcaGroup);
+    layout->addWidget(stackGroup);
+
+    connect(browseFusedBtn, &QPushButton::clicked, this, &PcaStackDialog::browseFused);
+    connect(pcaRunBtn,      &QPushButton::clicked, this, &PcaStackDialog::runPca);
+    connect(stackRunBtn,    &QPushButton::clicked, this, &PcaStackDialog::runStack);
+}
+
+void PcaStackDialog::browseFused() {
+    QString p = QFileDialog::getOpenFileName(this,
+        "Select fused data TIFF (from fusion team)",
+        QString(), "Raster files (*.tif *.tiff);;All files (*)");
+    if (!p.isEmpty()) fusedPathEdit_->setText(p);
+}
+
+void PcaStackDialog::runPca() {
+    if (!mw_->appState().surfaceReflectance) {
+        QMessageBox::warning(this, "Run Step 2 first",
+            "Run Step 2 (DN → Surface Reflectance) first.");
+        return;
+    }
+    try {
+        auto result = PcaReducer::reduce(
+            *mw_->appState().surfaceReflectance,
+            pcaStartSpin_->value(), pcaEndSpin_->value(),
+            pcaComponentsSpin_->value());
+        mw_->appState().pcaResult = result;
+        mw_->log("PCA", QString("PC1 explains %1% of variance.")
+                     .arg(result.explainedVarianceRatio[0] * 100.0, 0, 'f', 2));
+        mw_->previewWidget()->showSingleBand(result.components, 0);
+        QMessageBox::information(this, "PCA complete",
+            QString("%1 component(s). PC1 variance: %2%.")
+                .arg(result.components.bands)
+                .arg(result.explainedVarianceRatio[0] * 100.0, 0, 'f', 2));
+    } catch (const std::exception& e) {
+        mw_->log("PCA", QString("ERROR: %1").arg(e.what()));
+        QMessageBox::critical(this, "PCA failed", e.what());
+    }
+}
+
+void PcaStackDialog::runStack() {
+    if (!mw_->appState().surfaceReflectance) {
+        QMessageBox::warning(this, "Run Step 2 first",
+            "Run Step 2 (DN → Surface Reflectance) first.");
+        return;
+    }
+    // Fused data is OPTIONAL — if the fusion team has not shared their output
+    // yet, leave the field blank and the stack will contain Hyperion only.
+    const bool hasFused  = !fusedPathEdit_->text().isEmpty();
+    std::string fusedPath = hasFused ? fusedPathEdit_->text().toStdString() : "";
+    RasterCube  resultStack;
+    int         fusedBands = 0;
+
+    ProgressDialog pd("Building stack — please wait…", this);
+    // NOTE: surfaceReflectance is accessed by raw pointer inside the worker
+    // thread.  AppState owns the cube for the lifetime of the app, so this
+    // is safe as long as no other action replaces it while Step 5 is running
+    // (which the UI prevents by disabling steps while a dialog is open).
+    const RasterCube* refPtr = mw_->appState().surfaceReflectance.has_value()
+                               ? &(*mw_->appState().surfaceReflectance)
+                               : nullptr;
+    pd.runTask([&, refPtr](PipelineWorker* w) {
+        if (!refPtr) throw HsiError("Surface reflectance cube disappeared — run Step 2 again.");
+
+        if (hasFused) {
+            w->reportProgress(10, "Checking fused data size…");
+            int fw = 0, fh = 0, fb = 0;
+            RasterIO::datasetSize(fusedPath, fw, fh, fb);
+            fusedBands = fb;
+
+            RasterCube fused;
+            if (fw == refPtr->width && fh == refPtr->height) {
+                w->reportProgress(20, "Loading fused data from fusion team…");
+                fused = RasterIO::loadCube(fusedPath);
+            } else {
+                // Different (usually much higher) resolution than the
+                // Hyperion grid -- loadCube()+resampleToGrid() would
+                // allocate the whole fused raster twice at full resolution
+                // before ever shrinking it, which can exhaust memory on a
+                // large fusion product. Warp straight from disk into a
+                // buffer already sized to the Hyperion grid instead.
+                w->reportProgress(25, QString("Resampling fused data from %1×%2 → %3×%4, streamed directly "
+                                               "from disk to keep memory bounded…")
+                                           .arg(fw).arg(fh)
+                                           .arg(refPtr->width).arg(refPtr->height)
+                                           .toStdString().c_str());
+                fused = RasterIO::resampleFileToGrid(fusedPath, *refPtr);
+                w->reportProgress(50, "Resampling complete.");
+            }
+
+            w->reportProgress(60, QString("Stacking: %1 Hyperion + %2 fused bands…")
+                                   .arg(refPtr->bands).arg(fused.bands).toStdString().c_str());
+            std::vector<BandStacker::Input> inputs = {
+                { refPtr, "hyperspectral" },
+                { &fused, "fused_data"   },
+            };
+            resultStack = BandStacker::stack(inputs);
+        } else {
+            // Standalone mode — no fusion team data
+            w->reportProgress(30, "Standalone mode: stacking Hyperion + NDVI/NDWI only…");
+            std::vector<BandStacker::Input> inputs = { { refPtr, "hyperspectral" } };
+            resultStack = BandStacker::stack(inputs);
+            fusedBands = 0;
+            Logger::log("PcaStack", "Standalone mode: fused data not provided — "
+                                     "stack contains Hyperion bands only.");
+        }
+        w->reportProgress(100, "Done.");
+    });
+
+    if (!pd.succeeded()) {
+        mw_->log("BandStacker", "ERROR: " + pd.errorMessage());
+        QMessageBox::critical(this, "Stack failed", pd.errorMessage());
+        return;
+    }
+
+    mw_->appState().fusedDataPath = fusedPath;
+    mw_->appState().stackFused    = resultStack;
+
+    if (hasFused) {
+        mw_->log("BandStacker",
+            QString("Stack built: %1 total bands  (0–197 Hyperion + 198–%2 fused data).")
+                .arg(resultStack.bands)
+                .arg(resultStack.bands - 1));
+    } else {
+        mw_->log("BandStacker",
+            QString("Stack built: %1 bands, Hyperion-only (standalone -- no fusion team data provided). "
+                    "Downstream steps (6-9) will run on this stack normally.")
+                .arg(resultStack.bands));
+    }
+
+    mw_->previewWidget()->showSingleBand(resultStack, 0);
+    mw_->refreshStepStatus();
+
+    if (hasFused) {
+        QMessageBox::information(this, "Stack built",
+            QString("Stack complete: <b>%1 bands total</b><br><br>"
+                    "0 – 197&nbsp;&nbsp;&nbsp;: Hyperion surface reflectance (this module)<br>"
+                    "198 – %2 : Fused data (%3 bands from fusion team)")
+                .arg(resultStack.bands)
+                .arg(resultStack.bands - 1)
+                .arg(fusedBands));
+    } else {
+        QMessageBox::information(this, "Stack built (standalone)",
+            QString("Stack complete: <b>%1 bands total</b> — Hyperion only.<br><br>"
+                    "No fused data was provided, so this run continues standalone. "
+                    "You can proceed to Step 6 onward now, and re-run this step later to fold in "
+                    "fusion team data once it's available.")
+                .arg(resultStack.bands));
+    }
+    accept();
+}

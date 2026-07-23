@@ -1,0 +1,26 @@
+#pragma once
+// Convenience umbrella header -- include this from UI code instead of
+// listing every individual hsi/*.h file.
+
+#include "hsi/Types.h"
+#include "hsi/Logger.h"
+#include "hsi/RasterIO.h"
+#include "hsi/Orthorectifier.h"
+#include "hsi/RadiometricCalibrator.h"
+#include "hsi/BandSelector.h"
+#include "hsi/AtmosphericCorrector.h"
+#include "hsi/EsunTable.h"
+#include "hsi/SurfaceObjectMask.h"
+#include "hsi/PcaReducer.h"
+#include "hsi/BandStacker.h"
+#include "hsi/SpectralLibrary.h"
+#include "hsi/SamClassifier.h"
+#include "hsi/SvmModel.h"
+#include "hsi/BuiltUpClassifier.h"
+#include "hsi/RasterToVector.h"
+#include "hsi/LulcClassifier.h"
+#include "hsi/ChangeDetector.h"
+#include "hsi/Pipeline.h"
+#include "hsi/SpectralIndices.h"
+#include "hsi/LandCoverMapper.h"
+#include "hsi/RxDetector.h"

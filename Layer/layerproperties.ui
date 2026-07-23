@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>LayerProperties</class>
+ <widget class="QDialog" name="LayerProperties">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>600</width>
+    <height>500</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Layer Properties</string>
+  </property>
+
+  <layout class="QVBoxLayout" name="verticalLayout">
+
+   <item>
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
+      <string>Layer Information</string>
+     </property>
+
+     <layout class="QFormLayout" name="formLayout">
+
+      <item row="0" column="0">
+       <widget class="QLabel" name="labelLayerName">
+        <property name="text">
+         <string>Layer Name</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="layerNameLineEdit">
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+
+      <item row="1" column="0">
+       <widget class="QLabel" name="labelSource">
+        <property name="text">
+         <string>Source</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLineEdit" name="sourceLineEdit">
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+
+      <item row="2" column="0">
+       <widget class="QLabel" name="labelWidth">
+        <property name="text">
+         <string>Width</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLineEdit" name="widthLineEdit">
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+
+      <item row="3" column="0">
+       <widget class="QLabel" name="labelHeight">
+        <property name="text">
+         <string>Height</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QLineEdit" name="heightLineEdit">
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+
+      <item row="4" column="0">
+       <widget class="QLabel" name="labelBands">
+        <property name="text">
+         <string>Bands</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QLineEdit" name="bandsLineEdit">
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+
+      <item row="5" column="0">
+       <widget class="QLabel" name="labelDataType">
+        <property name="text">
+         <string>Data Type</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1">
+       <widget class="QLineEdit" name="datatypeLineEdit">
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+
+      <item row="6" column="0">
+       <widget class="QLabel" name="labelResolution">
+        <property name="text">
+         <string>Resolution</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="1">
+       <widget class="QLineEdit" name="resolutionLineEdit">
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+
+     </layout>
+    </widget>
+   </item>
+
+   <item>
+    <widget class="QLabel" name="labelProjection">
+     <property name="text">
+      <string>Projection</string>
+     </property>
+    </widget>
+   </item>
+
+   <item>
+    <widget class="QPlainTextEdit" name="projectionTextEdit">
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+
+   <item>
+    <widget class="QLabel" name="labelExtent">
+     <property name="text">
+      <string>Spatial Extent</string>
+     </property>
+    </widget>
+   </item>
+
+   <item>
+    <widget class="QPlainTextEdit" name="extentTextEdit">
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+
+  </layout>
+ </widget>
+
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>LayerProperties</receiver>
+   <slot>accept()</slot>
+  </connection>
+ </connections>
+
+</ui>

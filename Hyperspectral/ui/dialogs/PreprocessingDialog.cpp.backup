@@ -1,0 +1,512 @@
+//#include "PreprocessingDialog.h"
+//#include "../MainWindow.h"
+//#include "../Utils.h"
+//#include "hsi/Database.h"
+
+//#include <QFormLayout>
+//#include <QVBoxLayout>
+//#include <QHBoxLayout>
+//#include <QPushButton>
+//#include <QFileDialog>
+//#include <QMessageBox>
+//#include <QLabel>
+//#include <QGroupBox>
+
+//PreprocessingDialog::PreprocessingDialog(HsiMainWindow* mainWindow, QWidget* parent)
+//    : QDialog(parent), mw_(mainWindow) {
+//    setWindowTitle("Preprocessing: Orthorectification \u2192 Radiance \u2192 Surface Reflectance");
+//    setMinimumWidth(520);
+
+//    inputPathEdit_ = new QLineEdit(this);
+//    if (!mw_->appState().hyperionInputPath.empty())
+//        inputPathEdit_->setText(QString::fromStdString(mw_->appState().hyperionInputPath));
+//    auto* browseInputBtn = new QPushButton("Browse...", this);
+
+//    esunCsvEdit_ = new QLineEdit(this);
+//    esunCsvEdit_->setPlaceholderText("Optional: band_number,esun_value CSV (else a flat placeholder is used)");
+//    auto* browseEsunBtn = new QPushButton("Browse...", this);
+
+//    solarZenithSpin_ = new QDoubleSpinBox(this);
+//    solarZenithSpin_->setRange(0.0, 89.0);
+//    solarZenithSpin_->setValue(30.0);
+//    solarZenithSpin_->setSuffix(" deg");
+
+//    dayOfYearSpin_ = new QSpinBox(this);
+//    dayOfYearSpin_->setRange(1, 366);
+//    dayOfYearSpin_->setValue(171);
+
+//    darkObjectPercentileSpin_ = new QDoubleSpinBox(this);
+//    darkObjectPercentileSpin_->setRange(0.0, 10.0);
+//    darkObjectPercentileSpin_->setDecimals(2);
+//    darkObjectPercentileSpin_->setValue(0.5);
+//    darkObjectPercentileSpin_->setSuffix(" pct");
+
+//    pixelSizeSpin_ = new QDoubleSpinBox(this);
+//    pixelSizeSpin_->setRange(1.0, 1000.0);
+//    pixelSizeSpin_->setValue(30.0);
+//    pixelSizeSpin_->setSuffix(" m");
+
+//    correctionMethodCombo_ = new QComboBox(this);
+//    correctionMethodCombo_->addItem("Dark Object Subtraction (DOS, simplified QUAC-style)");
+//    correctionMethodCombo_->addItem("Empirical Line Method (ELM)");
+
+//    auto* inputRow = new QHBoxLayout();
+//    inputRow->addWidget(inputPathEdit_);
+//    inputRow->addWidget(browseInputBtn);
+
+//    auto* esunRow = new QHBoxLayout();
+//    esunRow->addWidget(esunCsvEdit_);
+//    esunRow->addWidget(browseEsunBtn);
+
+//    auto* form = new QFormLayout();
+//    form->addRow("Hyperion DN scene:", inputRow);
+//    form->addRow("ESUN table (CSV):", esunRow);
+//    form->addRow("Solar zenith angle:", solarZenithSpin_);
+//    form->addRow("Day of year:", dayOfYearSpin_);
+//    form->addRow("Ortho output pixel size:", pixelSizeSpin_);
+//    form->addRow("Surface reflectance method:", correctionMethodCombo_);
+
+//    // --- DOS-specific parameters ---
+//    dosGroup_ = new QGroupBox("Dark Object Subtraction parameters", this);
+//    auto* dosForm = new QFormLayout();
+//    dosForm->addRow("Dark-object percentile:", darkObjectPercentileSpin_);
+//    dosGroup_->setLayout(dosForm);
+
+//    // --- ELM-specific parameters ---
+//    elmSampleCsvEdit_ = new QLineEdit(this);
+//    elmSampleCsvEdit_->setPlaceholderText("CSV with 'dark,row,col' and 'bright,row,col' rows");
+//    auto* browseElmBtn = new QPushButton("Browse...", this);
+//    auto* elmCsvRow = new QHBoxLayout();
+//    elmCsvRow->addWidget(elmSampleCsvEdit_);
+//    elmCsvRow->addWidget(browseElmBtn);
+
+//    elmDarkReflectanceSpin_ = new QDoubleSpinBox(this);
+//    elmDarkReflectanceSpin_->setRange(0.0, 1.0);
+//    elmDarkReflectanceSpin_->setDecimals(3);
+//    elmDarkReflectanceSpin_->setValue(0.01);
+
+//    elmBrightReflectanceSpin_ = new QDoubleSpinBox(this);
+//    elmBrightReflectanceSpin_->setRange(0.0, 1.0);
+//    elmBrightReflectanceSpin_->setDecimals(3);
+//    elmBrightReflectanceSpin_->setValue(0.60);
+
+//    elmGroup_ = new QGroupBox("Empirical Line Method calibration targets", this);
+//    auto* elmForm = new QFormLayout();
+//    elmForm->addRow("Dark/bright sample CSV:", elmCsvRow);
+//    elmForm->addRow("Known dark-target reflectance:", elmDarkReflectanceSpin_);
+//    elmForm->addRow("Known bright-target reflectance:", elmBrightReflectanceSpin_);
+//    elmGroup_->setLayout(elmForm);
+//    elmGroup_->setVisible(false); // DOS is the default method
+
+//    auto* infoLabel = new QLabel(
+//        "If the scene already carries a valid geotransform/SRS and no GCPs, orthorectification "
+//        "is skipped automatically. Otherwise it is warped using its embedded GCPs/RPCs first.\n"
+//        "Band selection (VNIR 8-57, SWIR 77-224) and DN\u2192radiance (\u00f740 / \u00f780) run automatically.\n"
+//        "ELM needs a couple of pixels you already know the true ground reflectance of -- e.g. deep "
+//        "water (~0.01) and a concrete/sand patch (~0.6) -- picked from this same scene.",
+//        this);
+//    infoLabel->setWordWrap(true);
+//    infoLabel->setStyleSheet("color: #555;");
+
+//    auto* runBtn = new QPushButton("Run Preprocessing", this);
+//    runBtn->setDefault(true);
+
+//    auto* mainLayout = new QVBoxLayout(this);
+//    auto* group = new QGroupBox("Parameters", this);
+//    group->setLayout(form);
+//    mainLayout->addWidget(infoLabel);
+//    mainLayout->addWidget(group);
+//    mainLayout->addWidget(dosGroup_);
+//    mainLayout->addWidget(elmGroup_);
+//    mainLayout->addWidget(runBtn);
+
+//    connect(browseInputBtn, &QPushButton::clicked, this, &PreprocessingDialog::browseInput);
+//    connect(browseEsunBtn, &QPushButton::clicked, this, &PreprocessingDialog::browseEsun);
+//    connect(browseElmBtn, &QPushButton::clicked, this, &PreprocessingDialog::browseElmSamples);
+//    connect(runBtn, &QPushButton::clicked, this, &PreprocessingDialog::run);
+//    connect(correctionMethodCombo_, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int idx) {
+//        bool isElm = (idx == 1);
+//        elmGroup_->setVisible(isElm);
+//        dosGroup_->setVisible(!isElm);
+//    });
+//}
+
+//void PreprocessingDialog::browseInput() {
+//    QString path = QFileDialog::getOpenFileName(this, "Select Hyperion scene", QString(),
+//                                                  "Raster / zip archive (*.tif *.tiff *.img *.hdr *.bil *.zip);;All files (*)");
+//    if (path.isEmpty()) return;
+//    try {
+//        std::string resolved = ui_util::resolveRasterPath(path.toStdString());
+//        inputPathEdit_->setText(QString::fromStdString(resolved));
+//        if (resolved != path.toStdString()) {
+//            mw_->log("Archive", QString("Zip detected — extracted and using '%1'.")
+//                                     .arg(QString::fromStdString(resolved)));
+//        }
+//    } catch (const std::exception& e) {
+//        QMessageBox::critical(this, "Could not extract archive", e.what());
+//    }
+//}
+
+//void PreprocessingDialog::browseEsun() {
+//    QString path = QFileDialog::getOpenFileName(this, "Select ESUN CSV", QString(), "CSV files (*.csv);;All files (*)");
+//    if (!path.isEmpty()) esunCsvEdit_->setText(path);
+//}
+
+//void PreprocessingDialog::browseElmSamples() {
+//    QString path = QFileDialog::getOpenFileName(this, "Select dark/bright calibration sample CSV",
+//                                                  QString(), "CSV files (*.csv);;All files (*)");
+//    if (!path.isEmpty()) elmSampleCsvEdit_->setText(path);
+//}
+
+//void PreprocessingDialog::run() {
+//    if (inputPathEdit_->text().isEmpty()) {
+//        QMessageBox::warning(this, "Missing input", "Please choose a Hyperion scene first.");
+//        return;
+//    }
+
+//    try {
+//        hsi::Pipeline::PreprocessConfig cfg;
+//        cfg.inputPath = inputPathEdit_->text().toStdString();
+//        cfg.orthoOutputPath = cfg.inputPath + ".orthorectified.tif";
+//        cfg.orthoOptions.pixelSizeX = pixelSizeSpin_->value();
+//        cfg.orthoOptions.pixelSizeY = pixelSizeSpin_->value();
+//        cfg.solarGeometry.solarZenithDeg = solarZenithSpin_->value();
+//        cfg.solarGeometry.dayOfYear = dayOfYearSpin_->value();
+//        cfg.darkObjectPercentile = darkObjectPercentileSpin_->value();
+
+//        bool useElm = (correctionMethodCombo_->currentIndex() == 1);
+//        cfg.correctionMethod = useElm ? hsi::AtmosphericCorrector::CorrectionMethod::ELM
+//                                       : hsi::AtmosphericCorrector::CorrectionMethod::DOS;
+//        if (useElm) {
+//            if (elmSampleCsvEdit_->text().isEmpty()) {
+//                QMessageBox::warning(this, "Missing calibration samples",
+//                    "ELM needs a sample CSV with 'dark,row,col' and 'bright,row,col' rows.");
+//                return;
+//            }
+//            cfg.elmSamplePixels = ui_util::loadSampleCsv(elmSampleCsvEdit_->text().toStdString());
+//            cfg.elmDarkKnownReflectance = elmDarkReflectanceSpin_->value();
+//            cfg.elmBrightKnownReflectance = elmBrightReflectanceSpin_->value();
+//        }
+
+//        if (!esunCsvEdit_->text().isEmpty()) {
+//            cfg.esunPerBand = hsi::EsunTable::loadCsv(esunCsvEdit_->text().toStdString());
+//        } else {
+//            cfg.esunPerBand = hsi::EsunTable::flatFallback(198, 1000.0);
+//        }
+
+//        mw_->log("Preprocessing", QString("Starting (%1)...").arg(useElm ? "ELM" : "DOS"));
+
+//        // Cache key is the *source* Hyperion file's content, independent of
+//        // which path it happens to sit at. The product tag also encodes the
+//        // correction method -- otherwise switching from DOS to ELM (or back)
+//        // on the same file would silently serve the other method's cached
+//        // result instead of recomputing.
+//        std::string sourceKey = hsi::Database::computeSourceKey(cfg.inputPath);
+//        const std::string productTag = std::string("hyperion_surface_reflectance_") + (useElm ? "elm" : "dos");
+
+//        hsi::Pipeline::PreprocessResult result;
+//        bool fromCache = mw_->database().tryLoad(sourceKey, productTag, result.surfaceReflectance);
+//        if (fromCache) {
+//            result.wasAlreadyOrthorectified = true; // unknown at this point; ortho already happened previously either way
+//            mw_->log("Preprocessing", "Loaded surface reflectance from database cache — "
+//                                       "local file was not reprocessed.");
+//        } else {
+//            result = hsi::Pipeline::preprocess(cfg);
+//            if (!mw_->database().store(sourceKey, productTag, result.surfaceReflectance, cfg.inputPath)) {
+//                mw_->log("Preprocessing", QString("Note: result was NOT cached to the database (%1). "
+//                    "It will be recomputed from the local file next time.")
+//                    .arg(QString::fromStdString(mw_->database().lastError())));
+//            }
+//        }
+
+//        mw_->appState().hyperionInputPath = cfg.inputPath;
+//        mw_->appState().surfaceReflectance = result.surfaceReflectance;
+//        mw_->appState().wasAlreadyOrthorectified = result.wasAlreadyOrthorectified;
+
+//        mw_->log("Preprocessing", QString("Done. %1 bands, %2x%3. Orthorectification was %4.")
+//                      .arg(result.surfaceReflectance.bands)
+//                      .arg(result.surfaceReflectance.width)
+//                      .arg(result.surfaceReflectance.height)
+//                      .arg(result.wasAlreadyOrthorectified ? "already present (skipped)" : "performed (warped)"));
+
+//        int midBand = result.surfaceReflectance.bands / 2;
+//        mw_->previewWidget()->showSingleBand(result.surfaceReflectance, midBand);
+
+//        QMessageBox::information(this, "Preprocessing complete",
+//            QString("Surface reflectance cube ready: %1 bands, %2x%3 pixels.")
+//                .arg(result.surfaceReflectance.bands)
+//                .arg(result.surfaceReflectance.width)
+//                .arg(result.surfaceReflectance.height));
+//        accept();
+//    } catch (const std::exception& e) {
+//        mw_->log("Preprocessing", QString("ERROR: %1").arg(e.what()));
+//        QMessageBox::critical(this, "Preprocessing failed", e.what());
+//    }
+//}
+
+
+
+#include "PreprocessingDialog.h"
+#include "../MainWindow.h"
+#include "../Utils.h"
+#include "hsi/Database.h"
+#include "hsi/RasterIO.h"
+#include "UI/MainWindow/mainwindow.h"   // real WESEE window, for addRasterLayerToMap()
+
+#include <QFormLayout>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QPushButton>
+#include <QFileDialog>
+#include <QMessageBox>
+#include <QLabel>
+#include <QGroupBox>
+
+PreprocessingDialog::PreprocessingDialog(HsiMainWindow* mainWindow, QWidget* parent)
+    : QDialog(parent), mw_(mainWindow) {
+    setWindowTitle("Preprocessing: Orthorectification \u2192 Radiance \u2192 Surface Reflectance");
+    setMinimumWidth(520);
+
+    inputPathEdit_ = new QLineEdit(this);
+    if (!mw_->appState().hyperionInputPath.empty())
+        inputPathEdit_->setText(QString::fromStdString(mw_->appState().hyperionInputPath));
+    auto* browseInputBtn = new QPushButton("Browse...", this);
+
+    esunCsvEdit_ = new QLineEdit(this);
+    esunCsvEdit_->setPlaceholderText("Optional: band_number,esun_value CSV (else a flat placeholder is used)");
+    auto* browseEsunBtn = new QPushButton("Browse...", this);
+
+    solarZenithSpin_ = new QDoubleSpinBox(this);
+    solarZenithSpin_->setRange(0.0, 89.0);
+    solarZenithSpin_->setValue(30.0);
+    solarZenithSpin_->setSuffix(" deg");
+
+    dayOfYearSpin_ = new QSpinBox(this);
+    dayOfYearSpin_->setRange(1, 366);
+    dayOfYearSpin_->setValue(171);
+
+    darkObjectPercentileSpin_ = new QDoubleSpinBox(this);
+    darkObjectPercentileSpin_->setRange(0.0, 10.0);
+    darkObjectPercentileSpin_->setDecimals(2);
+    darkObjectPercentileSpin_->setValue(0.5);
+    darkObjectPercentileSpin_->setSuffix(" pct");
+
+    pixelSizeSpin_ = new QDoubleSpinBox(this);
+    pixelSizeSpin_->setRange(1.0, 1000.0);
+    pixelSizeSpin_->setValue(30.0);
+    pixelSizeSpin_->setSuffix(" m");
+
+    correctionMethodCombo_ = new QComboBox(this);
+    correctionMethodCombo_->addItem("Dark Object Subtraction (DOS, simplified QUAC-style)");
+    correctionMethodCombo_->addItem("Empirical Line Method (ELM)");
+
+    auto* inputRow = new QHBoxLayout();
+    inputRow->addWidget(inputPathEdit_);
+    inputRow->addWidget(browseInputBtn);
+
+    auto* esunRow = new QHBoxLayout();
+    esunRow->addWidget(esunCsvEdit_);
+    esunRow->addWidget(browseEsunBtn);
+
+    auto* form = new QFormLayout();
+    form->addRow("Hyperion DN scene:", inputRow);
+    form->addRow("ESUN table (CSV):", esunRow);
+    form->addRow("Solar zenith angle:", solarZenithSpin_);
+    form->addRow("Day of year:", dayOfYearSpin_);
+    form->addRow("Ortho output pixel size:", pixelSizeSpin_);
+    form->addRow("Surface reflectance method:", correctionMethodCombo_);
+
+    // --- DOS-specific parameters ---
+    dosGroup_ = new QGroupBox("Dark Object Subtraction parameters", this);
+    auto* dosForm = new QFormLayout();
+    dosForm->addRow("Dark-object percentile:", darkObjectPercentileSpin_);
+    dosGroup_->setLayout(dosForm);
+
+    // --- ELM-specific parameters ---
+    elmSampleCsvEdit_ = new QLineEdit(this);
+    elmSampleCsvEdit_->setPlaceholderText("CSV with 'dark,row,col' and 'bright,row,col' rows");
+    auto* browseElmBtn = new QPushButton("Browse...", this);
+    auto* elmCsvRow = new QHBoxLayout();
+    elmCsvRow->addWidget(elmSampleCsvEdit_);
+    elmCsvRow->addWidget(browseElmBtn);
+
+    elmDarkReflectanceSpin_ = new QDoubleSpinBox(this);
+    elmDarkReflectanceSpin_->setRange(0.0, 1.0);
+    elmDarkReflectanceSpin_->setDecimals(3);
+    elmDarkReflectanceSpin_->setValue(0.01);
+
+    elmBrightReflectanceSpin_ = new QDoubleSpinBox(this);
+    elmBrightReflectanceSpin_->setRange(0.0, 1.0);
+    elmBrightReflectanceSpin_->setDecimals(3);
+    elmBrightReflectanceSpin_->setValue(0.60);
+
+    elmGroup_ = new QGroupBox("Empirical Line Method calibration targets", this);
+    auto* elmForm = new QFormLayout();
+    elmForm->addRow("Dark/bright sample CSV:", elmCsvRow);
+    elmForm->addRow("Known dark-target reflectance:", elmDarkReflectanceSpin_);
+    elmForm->addRow("Known bright-target reflectance:", elmBrightReflectanceSpin_);
+    elmGroup_->setLayout(elmForm);
+    elmGroup_->setVisible(false); // DOS is the default method
+
+    auto* infoLabel = new QLabel(
+        "If the scene already carries a valid geotransform/SRS and no GCPs, orthorectification "
+        "is skipped automatically. Otherwise it is warped using its embedded GCPs/RPCs first.\n"
+        "Band selection (VNIR 8-57, SWIR 77-224) and DN\u2192radiance (\u00f740 / \u00f780) run automatically.\n"
+        "ELM needs a couple of pixels you already know the true ground reflectance of -- e.g. deep "
+        "water (~0.01) and a concrete/sand patch (~0.6) -- picked from this same scene.",
+        this);
+    infoLabel->setWordWrap(true);
+    infoLabel->setStyleSheet("color: #555;");
+
+    auto* runBtn = new QPushButton("Run Preprocessing", this);
+    runBtn->setDefault(true);
+
+    auto* mainLayout = new QVBoxLayout(this);
+    auto* group = new QGroupBox("Parameters", this);
+    group->setLayout(form);
+    mainLayout->addWidget(infoLabel);
+    mainLayout->addWidget(group);
+    mainLayout->addWidget(dosGroup_);
+    mainLayout->addWidget(elmGroup_);
+    mainLayout->addWidget(runBtn);
+
+    connect(browseInputBtn, &QPushButton::clicked, this, &PreprocessingDialog::browseInput);
+    connect(browseEsunBtn, &QPushButton::clicked, this, &PreprocessingDialog::browseEsun);
+    connect(browseElmBtn, &QPushButton::clicked, this, &PreprocessingDialog::browseElmSamples);
+    connect(runBtn, &QPushButton::clicked, this, &PreprocessingDialog::run);
+    connect(correctionMethodCombo_, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this](int idx) {
+        bool isElm = (idx == 1);
+        elmGroup_->setVisible(isElm);
+        dosGroup_->setVisible(!isElm);
+    });
+}
+
+void PreprocessingDialog::browseInput() {
+    QString path = QFileDialog::getOpenFileName(this, "Select Hyperion scene", QString(),
+                                                  "Raster / zip archive (*.tif *.tiff *.img *.hdr *.bil *.zip);;All files (*)");
+    if (path.isEmpty()) return;
+    try {
+        std::string resolved = ui_util::resolveRasterPath(path.toStdString());
+        inputPathEdit_->setText(QString::fromStdString(resolved));
+        if (resolved != path.toStdString()) {
+            mw_->log("Archive", QString("Zip detected — extracted and using '%1'.")
+                                     .arg(QString::fromStdString(resolved)));
+        }
+    } catch (const std::exception& e) {
+        QMessageBox::critical(this, "Could not extract archive", e.what());
+    }
+}
+
+void PreprocessingDialog::browseEsun() {
+    QString path = QFileDialog::getOpenFileName(this, "Select ESUN CSV", QString(), "CSV files (*.csv);;All files (*)");
+    if (!path.isEmpty()) esunCsvEdit_->setText(path);
+}
+
+void PreprocessingDialog::browseElmSamples() {
+    QString path = QFileDialog::getOpenFileName(this, "Select dark/bright calibration sample CSV",
+                                                  QString(), "CSV files (*.csv);;All files (*)");
+    if (!path.isEmpty()) elmSampleCsvEdit_->setText(path);
+}
+
+void PreprocessingDialog::run() {
+    if (inputPathEdit_->text().isEmpty()) {
+        QMessageBox::warning(this, "Missing input", "Please choose a Hyperion scene first.");
+        return;
+    }
+
+    try {
+        hsi::Pipeline::PreprocessConfig cfg;
+        cfg.inputPath = inputPathEdit_->text().toStdString();
+        cfg.orthoOutputPath = cfg.inputPath + ".orthorectified.tif";
+        cfg.orthoOptions.pixelSizeX = pixelSizeSpin_->value();
+        cfg.orthoOptions.pixelSizeY = pixelSizeSpin_->value();
+        cfg.solarGeometry.solarZenithDeg = solarZenithSpin_->value();
+        cfg.solarGeometry.dayOfYear = dayOfYearSpin_->value();
+        cfg.darkObjectPercentile = darkObjectPercentileSpin_->value();
+
+        bool useElm = (correctionMethodCombo_->currentIndex() == 1);
+        cfg.correctionMethod = useElm ? hsi::AtmosphericCorrector::CorrectionMethod::ELM
+                                       : hsi::AtmosphericCorrector::CorrectionMethod::DOS;
+        if (useElm) {
+            if (elmSampleCsvEdit_->text().isEmpty()) {
+                QMessageBox::warning(this, "Missing calibration samples",
+                    "ELM needs a sample CSV with 'dark,row,col' and 'bright,row,col' rows.");
+                return;
+            }
+            cfg.elmSamplePixels = ui_util::loadSampleCsv(elmSampleCsvEdit_->text().toStdString());
+            cfg.elmDarkKnownReflectance = elmDarkReflectanceSpin_->value();
+            cfg.elmBrightKnownReflectance = elmBrightReflectanceSpin_->value();
+        }
+
+        if (!esunCsvEdit_->text().isEmpty()) {
+            cfg.esunPerBand = hsi::EsunTable::loadCsv(esunCsvEdit_->text().toStdString());
+        } else {
+            cfg.esunPerBand = hsi::EsunTable::flatFallback(198, 1000.0);
+        }
+
+        mw_->log("Preprocessing", QString("Starting (%1)...").arg(useElm ? "ELM" : "DOS"));
+
+        // Cache key is the *source* Hyperion file's content, independent of
+        // which path it happens to sit at. The product tag also encodes the
+        // correction method -- otherwise switching from DOS to ELM (or back)
+        // on the same file would silently serve the other method's cached
+        // result instead of recomputing.
+        std::string sourceKey = hsi::Database::computeSourceKey(cfg.inputPath);
+        const std::string productTag = std::string("hyperion_surface_reflectance_") + (useElm ? "elm" : "dos");
+
+        hsi::Pipeline::PreprocessResult result;
+        bool fromCache = mw_->database().tryLoad(sourceKey, productTag, result.surfaceReflectance);
+        if (fromCache) {
+            result.wasAlreadyOrthorectified = true; // unknown at this point; ortho already happened previously either way
+            mw_->log("Preprocessing", "Loaded surface reflectance from database cache — "
+                                       "local file was not reprocessed.");
+        } else {
+            result = hsi::Pipeline::preprocess(cfg);
+            if (!mw_->database().store(sourceKey, productTag, result.surfaceReflectance, cfg.inputPath)) {
+                mw_->log("Preprocessing", QString("Note: result was NOT cached to the database (%1). "
+                    "It will be recomputed from the local file next time.")
+                    .arg(QString::fromStdString(mw_->database().lastError())));
+            }
+        }
+
+        mw_->appState().hyperionInputPath = cfg.inputPath;
+        mw_->appState().surfaceReflectance = result.surfaceReflectance;
+        mw_->appState().wasAlreadyOrthorectified = result.wasAlreadyOrthorectified;
+
+        // Drop the orthorectified surface-reflectance cube onto the real
+        // map so Step 1 actually shows something, not just an in-memory
+        // cube used internally by later steps. Uses bands 1/2/3 as a rough
+        // RGB preview (LayerManager::addRasterLayer's >=3-band path) --
+        // not true color, but enough to see the scene positioned correctly
+        // over its real location.
+        {
+            std::string previewPath = cfg.inputPath + ".surface_reflectance.tif";
+            try {
+                hsi::RasterIO::saveCube(result.surfaceReflectance, previewPath);
+                if (mapWindow_)
+                    mapWindow_->addRasterLayerToMap(QString::fromStdString(previewPath));
+            } catch (const std::exception& e) {
+                mw_->log("Preprocessing", QString("Note: couldn't save map preview (%1).").arg(e.what()));
+            }
+        }
+
+        mw_->log("Preprocessing", QString("Done. %1 bands, %2x%3. Orthorectification was %4.")
+                      .arg(result.surfaceReflectance.bands)
+                      .arg(result.surfaceReflectance.width)
+                      .arg(result.surfaceReflectance.height)
+                      .arg(result.wasAlreadyOrthorectified ? "already present (skipped)" : "performed (warped)"));
+
+        int midBand = result.surfaceReflectance.bands / 2;
+        mw_->previewWidget()->showSingleBand(result.surfaceReflectance, midBand);
+
+        QMessageBox::information(this, "Preprocessing complete",
+            QString("Surface reflectance cube ready: %1 bands, %2x%3 pixels.")
+                .arg(result.surfaceReflectance.bands)
+                .arg(result.surfaceReflectance.width)
+                .arg(result.surfaceReflectance.height));
+        accept();
+    } catch (const std::exception& e) {
+        mw_->log("Preprocessing", QString("ERROR: %1").arg(e.what()));
+        QMessageBox::critical(this, "Preprocessing failed", e.what());
+    }
+}

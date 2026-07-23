@@ -1,0 +1,265 @@
+<ui version="4.0">
+<class>statusbarwidget</class>
+<widget class="QWidget" name="statusbarwidget">
+<property name="geometry">
+<rect>
+<x>0</x>
+<y>0</y>
+<width>1450</width>
+<height>40</height>
+</rect>
+</property>
+
+<layout class="QHBoxLayout" name="horizontalLayout">
+<property name="spacing">
+<number>4</number>
+</property>
+<property name="leftMargin">
+<number>2</number>
+</property>
+<property name="topMargin">
+<number>2</number>
+</property>
+<property name="rightMargin">
+<number>2</number>
+</property>
+<property name="bottomMargin">
+<number>2</number>
+</property>
+
+<!-- Lon / Lat -->
+<item>
+<widget class="QLabel" name="labelLonLat">
+<property name="text">
+<string>Lon/Lat</string>
+</property>
+</widget>
+</item>
+
+<item>
+<widget class="QLineEdit" name="lonLatLineEdit">
+<property name="minimumSize">
+<size>
+<width>180</width>
+<height>24</height>
+</size>
+</property>
+<property name="readOnly">
+<bool>true</bool>
+</property>
+</widget>
+</item>
+
+<!-- Grid -->
+<item>
+<widget class="QLabel" name="labelGrid">
+<property name="text">
+<string>Grid</string>
+</property>
+</widget>
+</item>
+
+<!--<item>
+<widget class="QLineEdit" name="gridLineEdit">
+<property name="minimumSize">
+<size>
+<width>70</width>
+<height>24</height>
+</size>
+</property>
+<property name="readOnly">
+<bool>true</bool>
+</property>
+</widget>
+</item>-->
+
+<item>
+<widget class="QLineEdit" name="gridLineEdit">
+<property name="minimumSize">
+<size>
+<width>50</width>
+<height>24</height>
+</size>
+</property>
+
+<property name="maximumSize">
+<size>
+<width>60</width>
+<height>24</height>
+</size>
+</property>
+
+<property name="readOnly">
+<bool>true</bool>
+</property>
+
+<property name="alignment">
+<set>Qt::AlignCenter</set>
+</property>
+</widget>
+</item>
+
+<!-- Cursor -->
+<item>
+<widget class="QLabel" name="labelCursor">
+<property name="text">
+<string>UTM</string>
+</property>
+</widget>
+</item>
+
+<item>
+<widget class="QLineEdit" name="cursorLineEdit">
+<property name="minimumSize">
+<size>
+<width>220</width>
+<height>24</height>
+</size>
+</property>
+<property name="readOnly">
+<bool>true</bool>
+</property>
+</widget>
+</item>
+
+<!-- Rotation -->
+<item>
+<widget class="QLabel" name="labelRotation">
+<property name="text">
+<string>Rotation</string>
+</property>
+</widget>
+</item>
+
+<item>
+<widget class="QDoubleSpinBox" name="rotationSpinBox">
+<property name="minimumSize">
+<size>
+<width>80</width>
+<height>24</height>
+</size>
+</property>
+<property name="suffix">
+<string> °</string>
+</property>
+<property name="minimum">
+<double>-180.000000000000000</double>
+</property>
+<property name="maximum">
+<double>180.000000000000000</double>
+</property>
+</widget>
+</item>
+
+<!-- Scale -->
+<item>
+<widget class="QLabel" name="labelScale">
+<property name="text">
+<string>Scale</string>
+</property>
+</widget>
+</item>
+
+<item>
+<widget class="QComboBox" name="scaleComboBox">
+<property name="minimumSize">
+<size>
+<width>120</width>
+<height>24</height>
+</size>
+</property>
+<item><property name="text"><string>1:1000</string></property></item>
+<item><property name="text"><string>1:2500</string></property></item>
+<item><property name="text"><string>1:5000</string></property></item>
+<item><property name="text"><string>1:10000</string></property></item>
+<item><property name="text"><string>1:25000</string></property></item>
+<item><property name="text"><string>1:50000</string></property></item>
+<item><property name="text"><string>1:100000</string></property></item>
+<item><property name="text"><string>1:500000</string></property></item>
+<item><property name="text"><string>1:1000000</string></property></item>
+</widget>
+</item>
+
+<!-- Projection -->
+<item>
+<widget class="QLabel" name="labelProjection">
+<property name="text">
+<string>Projection</string>
+</property>
+</widget>
+</item>
+
+<item>
+<widget class="QLineEdit" name="projectionLineEdit">
+<property name="minimumSize">
+<size>
+<width>70</width>
+<height>24</height>
+</size>
+</property>
+
+<property name="maximumSize">
+<size>
+<width>80</width>
+<height>24</height>
+</size>
+</property>
+
+<property name="readOnly">
+<bool>true</bool>
+</property>
+</widget>
+</item>
+
+<!-- View -->
+<item>
+<widget class="QLabel" name="labelView">
+<property name="text">
+<string>Area</string>
+</property>
+</widget>
+</item>
+
+<item>
+<widget class="QLineEdit" name="viewSizeLineEdit">
+<property name="minimumSize">
+<size>
+<width>150</width>
+<height>24</height>
+</size>
+</property>
+<property name="readOnly">
+<bool>true</bool>
+</property>
+</widget>
+</item>
+
+<!-- Date -->
+<item>
+<widget class="QLabel" name="labelDate">
+<property name="text">
+<string>Date And time</string>
+</property>
+</widget>
+</item>
+
+<item>
+<widget class="QLineEdit" name="dateTimeLineEdit">
+<property name="minimumSize">
+<size>
+<width>170</width>
+<height>24</height>
+</size>
+</property>
+<property name="readOnly">
+<bool>true</bool>
+</property>
+</widget>
+</item>
+
+</layout>
+</widget>
+
+<resources/>
+<connections/>
+</ui>

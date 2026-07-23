@@ -1,0 +1,15 @@
+<RCC>
+    <qresource prefix="/file">
+        <file>Funnel.svg</file>
+        <file>FolderOpen.svg</file>
+        <file>logo_dark-bg_vector.svg</file>
+        <file>refresh-arrow.png</file>
+        <file>WhatsApp Image 2026-07-04 at 12.34.04 PM.jpeg</file>
+        <file>WhatsApp Image 2026-07-04 at 12.34.03 PM (1).jpeg</file>
+        <file>WhatsApp Image 2026-07-04 at 12.34.03 PM.jpeg</file>
+        <file>WhatsApp Image 2026-07-04 at 12.43.22 PM.jpeg</file>
+        <file>WhatsApp Image 2026-07-06 at 11.02.07 AM.jpeg</file>
+        <file>World.tif</file>
+        <file>North_Arrow.png</file>
+    </qresource>
+</RCC>

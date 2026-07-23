@@ -1,0 +1,415 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>importdialog</class>
+ <widget class="QWidget" name="importdialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1000</width>
+    <height>500</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>1000</width>
+    <height>500</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>1000</width>
+    <height>500</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Pre-Proceesing</string>
+  </property>
+  <widget class="QWidget" name="layoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>940</width>
+     <height>470</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_2">
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout_4">
+      <item>
+       <widget class="QGroupBox" name="grpSARData">
+        <property name="minimumSize">
+         <size>
+          <width>936</width>
+          <height>202</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>936</width>
+          <height>202</height>
+         </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">font-family: &quot;IBM Plex Sans&quot;;
+font-size: 20px;
+font-weight: 500;
+color:#023B59
+</string>
+        </property>
+        <property name="title">
+         <string>Select SAR Data</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <item>
+            <widget class="QLineEdit" name="txtSARZipPath">
+             <property name="minimumSize">
+              <size>
+               <width>631</width>
+               <height>46</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>631</width>
+               <height>46</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background-color:#D3D7CF</string>
+             </property>
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+             <property name="placeholderText">
+              <string>Select the SAR zip folder</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="btnSARBrowse">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>109</width>
+               <height>46</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">
+    padding: 8px 24px;
+    border: 1px solid #000000;
+    border-radius: 23px;
+    font-size: 16px;</string>
+             </property>
+             <property name="text">
+              <string>Browse</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="btnSARRun">
+             <property name="minimumSize">
+              <size>
+               <width>109</width>
+               <height>46</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>109</width>
+               <height>46</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">
+    padding: 8px 24px;
+    border: 1px solid #000000;
+    border-radius: 23px;
+    font-size: 16px;
+</string>
+             </property>
+             <property name="text">
+              <string>Run</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QProgressBar" name="progressSAR">
+           <property name="minimumSize">
+            <size>
+             <width>808</width>
+             <height>46</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>808</width>
+             <height>46</height>
+            </size>
+           </property>
+           <property name="value">
+            <number>0</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="grpOpticalData">
+        <property name="minimumSize">
+         <size>
+          <width>936</width>
+          <height>202</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>936</width>
+          <height>202</height>
+         </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">font-family: &quot;IBM Plex Sans&quot;;
+font-size: 20px;
+font-weight: 500;
+color:#023B59
+
+</string>
+        </property>
+        <property name="title">
+         <string>Select Optical MX Data</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <item>
+            <widget class="QLineEdit" name="txtOpticalZipPath">
+             <property name="minimumSize">
+              <size>
+               <width>631</width>
+               <height>46</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>631</width>
+               <height>46</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background-color:#D3D7CF
+</string>
+             </property>
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+             <property name="placeholderText">
+              <string>Select the optical zip folder</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="btnOpticalBrowse">
+             <property name="minimumSize">
+              <size>
+               <width>109</width>
+               <height>46</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>109</width>
+               <height>46</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">
+    padding: 8px 24px;
+    border: 1px solid #000000;
+    border-radius: 23px;
+    font-size: 16px;</string>
+             </property>
+             <property name="text">
+              <string>Browse</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="btnOpticalRun">
+             <property name="minimumSize">
+              <size>
+               <width>109</width>
+               <height>46</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>109</width>
+               <height>46</height>
+              </size>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">
+    padding: 8px 24px;
+    border: 1px solid #000000;
+    border-radius: 23px;
+    font-size: 16px;
+</string>
+             </property>
+             <property name="text">
+              <string>Run</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QProgressBar" name="progressOptical">
+           <property name="minimumSize">
+            <size>
+             <width>808</width>
+             <height>46</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>808</width>
+             <height>46</height>
+            </size>
+           </property>
+           <property name="value">
+            <number>0</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btnRunAll">
+        <property name="minimumSize">
+         <size>
+          <width>109</width>
+          <height>46</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>109</width>
+          <height>46</height>
+         </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">
+    padding: 8px 24px;
+    border: 1px solid #000000;
+    border-radius: 23px;
+    font-size: 16px;
+font-family: &quot;IBM Plex Sans&quot;;
+font-size: 16px;
+font-weight: 400;
+color:#023B59</string>
+        </property>
+        <property name="text">
+         <string>Run All</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btnClear">
+        <property name="minimumSize">
+         <size>
+          <width>109</width>
+          <height>46</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>109</width>
+          <height>46</height>
+         </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">
+    padding: 8px 24px;
+    border: 1px solid #000000;
+    border-radius: 23px;
+    font-size: 16px;
+font-family: &quot;IBM Plex Sans&quot;;
+font-size: 16px;
+font-weight: 400;
+color:#023B59
+</string>
+        </property>
+        <property name="text">
+         <string>Reset</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btnClose">
+        <property name="minimumSize">
+         <size>
+          <width>109</width>
+          <height>46</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>109</width>
+          <height>46</height>
+         </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">
+    padding: 8px 24px;
+    border: 1px solid #000000;
+    border-radius: 23px;
+    font-size: 16px;
+font-family: &quot;IBM Plex Sans&quot;;
+font-size: 16px;
+font-weight: 400;
+color:#023B59</string>
+        </property>
+        <property name="text">
+         <string>Cancel</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

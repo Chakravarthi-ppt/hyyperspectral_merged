@@ -1,0 +1,89 @@
+# ============================
+# Qt Creator
+# ============================
+*.pro.user
+*.user
+*.user.*
+*.autosave
+.qmake.stash
+
+# ============================
+# Build Directories
+# ============================
+build*/
+Build/
+build/
+Debug/
+Release/
+debug/
+release/
+
+# ============================
+# Qt Generated Files
+# ============================
+Makefile
+Makefile.*
+
+moc_*.cpp
+moc_*.h
+ui_*.h
+qrc_*.cpp
+moc_predefs.h
+
+# ============================
+# Object Files
+# ============================
+*.o
+*.obj
+
+# ============================
+# Libraries
+# ============================
+*.a
+*.so
+*.dll
+*.lib
+
+# ============================
+# Executables
+# ============================
+*.exe
+*.out
+WesseUpdatedProject
+
+# ============================
+# CMake
+# ============================
+CMakeFiles/
+CMakeCache.txt
+
+# ============================
+# Logs & Temporary Files
+# ============================
+*.log
+*.tmp
+*.swp
+*~
+
+# ============================
+# Application Generated Folders
+# ============================
+Output/
+PreProcessed/
+Temp/
+Cache/
+Logs/
+
+# ============================
+# Large Data Files
+# ============================
+World.tif
+Data/World.tif
+
+# Local configuration
+common.pri
+
+qrc_resource.cpp
+qrc_*.cpp
+WesseUpdatedProject
+
